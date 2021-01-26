@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="error" name="log4j2-local" monitorInterval="60">
+
+  <Properties>
+    <Property name="logs-dir">./logs</Property>
+    <Property name="service-name">itau-client-test</Property>
+    <Property name="event-service-name">event.${service-name}</Property>
+    <Property name="logPattern">${service-name}: [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId},%X{spanExportable}] [%t] %c{2} - %msg%n</Property>
+    <Property name="event-log-pattern">[EVENT-LOG] ${service-name}: [%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%X{traceId},%X{spanId},%X{spanExportable}] [%t] %c{1} - %msg%n</Property>
+  </Properties>
+
+  <Appenders>
+
+    <RollingFile name="Event-File-Log-Appender" fileName="${logs-dir}/${event-service-name}.log" filePattern="${logs-dir}/${event-service-name}-%i.zip" ignoreExceptions="false">
+      <PatternLayout>
+        <Pattern>${event-log-pattern}</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="3" />
+    </RollingFile >
+
+    <Console name="Event-Console-Log-Appender" target="SYSTEM_OUT">
+      <PatternLayout>
+        <Pattern>${event-log-pattern}</Pattern>
+      </PatternLayout>
+    </Console>
+
+    <Console name="Console-Log-Appender" target="SYSTEM_OUT">
+      <PatternLayout>
+        <Pattern>${logPattern}</Pattern>
+      </PatternLayout>
+    </Console>
+
+    <RollingFile name="File-Appender" fileName="${logs-dir}/${service-name}.log" filePattern="${logs-dir}/${service-name}-%i.zip" ignoreExceptions="false">
+      <PatternLayout header="${fileName} - ${java:vm} - ${java:os}\n">
+        <Pattern>${logPattern}</Pattern>
+      </PatternLayout>
+      <Policies>
+        <SizeBasedTriggeringPolicy size="20 MB" />
+      </Policies>
+      <DefaultRolloverStrategy max="3" />
+    </RollingFile>
+
+  </Appenders>
+  <Loggers>
+    <!-- Logger to capture events from applicaion (always as INFO level ) -->
+    <!-- Should not propagate to Root logger (additivity false) -->
+    <Logger name="event-log" level="INFO" additivity="false">
+      <AppenderRef ref="Event-File-Log-Appender" />
+    </Logger>
+
+    <!-- Should not propagate to Root logger (additivity false) -->
+    <Logger name="com.itau" level="DEBUG" additivity="false">
+      <AppenderRef ref="File-Appender" />
+      <AppenderRef ref="Console-Log-Appender" />
+    </Logger>
+
+    <!-- Should not propagate to Root logger (additivity false) -->
+    <Logger name="org.springframework.security" level="INFO" additivity="false">
+      <AppenderRef ref="File-Appender" />
+      <AppenderRef ref="Console-Log-Appender" /> 
+    </Logger>
+ 
+
+    <Root level="WARN">
+      <AppenderRef ref="File-Appender" />
+      <AppenderRef ref="Console-Log-Appender" />
+    </Root>
+  </Loggers>
+</Configuration>
