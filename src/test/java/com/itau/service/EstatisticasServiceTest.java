@@ -33,7 +33,6 @@ public class EstatisticasServiceTest {
 	}
 	
 	@Test
-	@Transactional
 	public void testSaveEstatistica() {
         boolean valid;
 		try {

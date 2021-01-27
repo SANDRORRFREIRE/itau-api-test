@@ -15,8 +15,8 @@ import javax.persistence.Table;
 public class EstatisticaEntity {
 	
     @Id
-    @SequenceGenerator(name = "seq_estatistica", sequenceName = "seq_estatistica")
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_estatistica")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "employee_estatistica")
+    @SequenceGenerator(name = "employee_estatistica", sequenceName = "seq_estatistica", allocationSize = 1)
 	@Column(name = "id_estatistica")
 	private Long id;
 
